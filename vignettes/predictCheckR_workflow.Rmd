@@ -1,0 +1,291 @@
+---
+title: "Posterior Predictive Checking with predictCheckR"
+author: "predictCheckR Maintainer"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Posterior Predictive Checking with predictCheckR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  fig.width = 7,
+  fig.height = 4,
+  dpi = 120,
+  out.width = "100%"
+)
+```
+
+# Introduction
+
+Posterior predictive checking (PPC) is a principled, simulation-based
+technique for assessing Bayesian model fit.  Rather than relying solely on
+likelihood-based information criteria, PPC asks a direct question:
+
+> *If the model is correct, would it generate data that look like the data
+> we actually observed?*
+
+## The Posterior Predictive Distribution
+
+Given a Bayesian model with likelihood $p(y \mid \theta)$ and prior
+$p(\theta)$, inference yields the posterior $p(\theta \mid y) \propto
+p(y \mid \theta)\, p(\theta)$.  The **posterior predictive distribution** for
+a future — or hypothetically replicated — outcome $y^{rep}$ is
+
+$$
+p(y^{rep} \mid y)
+  = \int p(y^{rep} \mid \theta)\, p(\theta \mid y)\, d\theta.
+$$
+
+In practice the integral is approximated by Monte Carlo averaging over $S$
+posterior draws $\theta^{(1)}, \ldots, \theta^{(S)}$:
+
+$$
+p(y^{rep} \mid y)
+  \approx \frac{1}{S} \sum_{s=1}^{S} p\!\left(y^{rep} \mid \theta^{(s)}\right).
+$$
+
+Each draw $y^{rep(s)}$ is a complete replicated dataset of the same size as
+$y$.  The collection $\{y^{rep(s)}\}_{s=1}^{S}$ forms the **posterior
+predictive ensemble** that is used for visual and numerical diagnostics.
+
+## Predictive Discrepancy Statistics
+
+A scalar **test statistic** $T(\cdot)$ summarises some property of a dataset
+(e.g.\ the mean, standard deviation, or a tail quantile).  The
+**Bayesian $p$-value** for $T$ is
+
+$$
+p_B = \Pr\!\left(T(y^{rep}) \geq T(y) \mid y\right)
+    \approx \frac{1}{S}\sum_{s=1}^{S}
+            \mathbf{1}\!\left[T(y^{rep(s)}) \geq T(y)\right].
+$$
+
+A value of $p_B \approx 0.5$ indicates that the model is well-calibrated with
+respect to $T$.  Extreme values ($p_B < 0.05$ or $p_B > 0.95$) flag potential
+misfit.
+
+---
+
+# Package Setup
+
+Install predictCheckR from GitHub (once published) or load it from the source
+directory during development:
+
+```{r load-package, message = FALSE}
+library(predictCheckR)
+library(ggplot2)
+```
+
+---
+
+# The Example Dataset
+
+**predictCheckR** ships with `example_data`, a small simulated regression
+dataset generated from the model
+
+$$
+x_i \sim \mathcal{N}(0, 1), \qquad
+y_i = 2 + 3 x_i + \varepsilon_i, \qquad
+\varepsilon_i \sim \mathcal{N}(0, 1), \qquad i = 1, \ldots, 100.
+$$
+
+```{r load-data}
+data(example_data)
+head(example_data)
+```
+
+```{r plot-data, fig.cap = "Scatter plot of the example regression dataset."}
+ggplot(example_data, aes(x = x, y = y)) +
+  geom_point(alpha = 0.6, colour = "steelblue") +
+  geom_smooth(method = "lm", se = TRUE, colour = "grey30",
+              fill = "grey80", linewidth = 0.8) +
+  labs(
+    title    = "Example Regression Dataset",
+    subtitle = "True model: y = 2 + 3x + N(0,1)",
+    x        = "Predictor  x",
+    y        = "Response  y"
+  ) +
+  theme_ppc()
+```
+
+---
+
+# Generating Fake Posterior Draws
+
+In a real analysis, posterior draws would come from a sampler such as
+**rstan** or **brms**.  Here we simulate draws directly to keep the vignette
+self-contained.
+
+Suppose we have obtained $S = 400$ posterior samples of the intercept
+$\alpha$ and slope $\beta$.  We centre the draws on the true values but add
+realistic posterior uncertainty.
+
+```{r fake-draws}
+set.seed(101)
+S <- 400   # posterior iterations
+n <- nrow(example_data)
+
+# Simulate posterior draws: alpha ~ N(2, 0.15^2), beta ~ N(3, 0.12^2)
+alpha_draws <- rnorm(S, mean = 2.0, sd = 0.15)
+beta_draws  <- rnorm(S, mean = 3.0, sd = 0.12)
+sigma_draws <- abs(rnorm(S, mean = 1.0, sd = 0.08))  # residual SD draws
+
+# Posterior draws matrix (S x 2): columns are [alpha, beta]
+posterior_draws <- cbind(intercept = alpha_draws, slope = beta_draws)
+
+# Design matrix (n x 2): [1, x]
+X <- cbind(1, example_data$x)
+
+dim(posterior_draws)
+dim(X)
+```
+
+---
+
+# Generating Posterior Predictive Samples
+
+`simulate_ppc()` takes the $S \times P$ draws matrix and an optional design
+matrix to produce the $S \times n$ replicated data matrix.
+
+```{r simulate-ppc}
+y_rep <- simulate_ppc(
+  posterior_draws = posterior_draws,
+  X               = X,
+  family          = "gaussian",
+  sigma_posterior = sigma_draws
+)
+
+dim(y_rep)   # 400 rows (draws) x 100 columns (observations)
+```
+
+Each row of `y_rep` is one plausible dataset that the model could have
+generated.
+
+---
+
+# Running Posterior Predictive Diagnostics
+
+`ppc_diagnostics()` computes several scalar discrepancy statistics and returns
+an S3 object with a dedicated `print` method.
+
+```{r diagnostics}
+y_obs <- example_data$y
+
+diag_result <- ppc_diagnostics(y_obs = y_obs, y_rep = y_rep)
+print(diag_result)
+```
+
+**Interpreting the output:**
+
+| Statistic | Interpretation |
+|-----------|---------------|
+| Mean difference | Should be close to 0. |
+| Variance difference | Should be close to 0. |
+| Bayesian $p$-value | Values near 0.5 indicate calibration. |
+| RMSE | Lower is better; reflects point-prediction accuracy. |
+| Coverage (95 % CI) | Should be near 0.95 for a well-calibrated model. |
+
+---
+
+# Visualisation
+
+## Density Overlay
+
+The density overlay is the workhorse visualisation for PPC.  It
+superimposes the kernel density estimate of $y^{obs}$ (dark line) over a
+random subsample of $y^{rep}$ densities (light lines).
+
+```{r density-overlay, fig.cap = "PPC density overlay. The dark line is the observed data; light lines are 50 random posterior predictive replicates."}
+plot_ppc_overlay(
+  y_obs     = y_obs,
+  y_rep     = y_rep,
+  n_samples = 50
+)
+```
+
+Close agreement between the dark and light lines indicates that the model
+reproduces the marginal distribution of the response faithfully.
+
+## Test-Statistic Distribution
+
+`plot_ppc_stat()` shows the distribution of $T(y^{rep})$ across all draws as
+a histogram, with a vertical line for $T(y^{obs})$.
+
+```{r ppc-stat-mean, fig.cap = "PPC statistic plot for the mean."}
+plot_ppc_stat(y_obs = y_obs, y_rep = y_rep, stat = "mean")
+```
+
+```{r ppc-stat-sd, fig.cap = "PPC statistic plot for the standard deviation."}
+plot_ppc_stat(y_obs = y_obs, y_rep = y_rep, stat = "sd")
+```
+
+The vertical line (observed statistic) should fall well within the
+histogram mass when the model is well-specified.
+
+---
+
+# Model Comparison
+
+`compare_models_ppc()` produces a side-by-side table of predictive
+performance metrics for two competing models, making it straightforward to
+assess which model better describes the data.
+
+```{r model-comparison}
+# Mis-specified model: draws centred on a shifted mean
+set.seed(202)
+posterior_draws_bad <- cbind(
+  intercept = rnorm(S, mean = 4.0, sd = 0.15),   # wrong intercept
+  slope     = rnorm(S, mean = 3.0, sd = 0.12)
+)
+
+y_rep_bad <- simulate_ppc(
+  posterior_draws = posterior_draws_bad,
+  X               = X,
+  family          = "gaussian",
+  sigma_posterior = sigma_draws
+)
+
+compare_models_ppc(
+  y_obs       = y_obs,
+  y_rep1      = y_rep,
+  y_rep2      = y_rep_bad,
+  model_names = c("Correct Model", "Shifted Intercept")
+)
+```
+
+The correctly-specified model should show lower RMSE and MAE, and a
+predictive variance gap close to zero.
+
+---
+
+# Conclusion and Interpretation
+
+Posterior predictive checking provides a transparent, simulation-based window
+into model adequacy.  The **predictCheckR** workflow consists of four steps:
+
+1. **Fit** a Bayesian model and extract $S$ posterior draw vectors.
+2. **Simulate** posterior predictive replicates with `simulate_ppc()`.
+3. **Diagnose** discrepancies with `ppc_diagnostics()`.
+4. **Visualise** with `plot_ppc_overlay()` and `plot_ppc_stat()`.
+
+When the model is well-specified, replicated data should be statistically
+indistinguishable from the observed data.  Systematic departures — heavy
+tails, multimodality, bias in a test statistic — point directly to the
+aspects of the data-generating process that the model fails to capture.
+
+---
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```
