@@ -1,0 +1,59 @@
+url: https://utkarshpawade.github.io/predictCheckR
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+home:
+  title: "predictCheckR — Bayesian Posterior Predictive Checking"
+  description: >
+    A minimal toolkit for Bayesian posterior predictive checking built on
+    the bayesplot and ggplot2 ecosystems.
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/utkarshpawade/predictCheckR 
+      aria-label: GitHub
+
+reference:
+  - title: "Core Workflow"
+    desc: >
+      The four main functions that cover the end-to-end posterior predictive
+      checking workflow.
+    contents:
+      - simulate_ppc
+      - ppc_diagnostics
+      - plot_ppc_overlay
+      - plot_ppc_stat
+
+  - title: "Model Comparison"
+    desc: Compare competing models using predictive performance metrics.
+    contents:
+      - compare_models_ppc
+
+  - title: "Utilities"
+    desc: Helper functions for customising output.
+    contents:
+      - theme_ppc
+      - print.ppc_diagnostics
+
+  - title: "Data"
+    desc: Bundled example dataset.
+    contents:
+      - example_data
+
+articles:
+  - title: "Get Started"
+    navbar: ~
+    contents:
+      - predictCheckR_workflow
+
+news:
+  releases:
+    - text: "Version 0.1.0"
+      href: https://github.com/utkarshpawade/predictCheckR/releases/tag/v0.1.0

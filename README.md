@@ -47,7 +47,7 @@ Install the development version directly from GitHub:
 
 ```r
 # install.packages("devtools")
-devtools::install_github("user/predictCheckR", build_vignettes = TRUE)
+devtools::install_github("utkarshpawade/predictCheckR", build_vignettes = TRUE)
 ```
 
 ---
@@ -180,7 +180,7 @@ If you use predictCheckR in academic work, please cite:
 ```
 predictCheckR Maintainer (2026). predictCheckR: Bayesian Posterior Predictive
 Checking Utilities. R package version 0.1.0.
-https://github.com/user/predictCheckR
+https://github.com/utkarshpawade/predictCheckR
 ```
 
 BibTeX:
@@ -191,7 +191,7 @@ BibTeX:
   author = {{predictCheckR Maintainer}},
   year   = {2026},
   note   = {R package version 0.1.0},
-  url    = {https://github.com/user/predictCheckR}
+  url    = {https://github.com/utkarshpawade/predictCheckR}
 }
 ```
 
