@@ -1,0 +1,9 @@
+pandoc: 3.1.11
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  predictCheckR_workflow: predictCheckR_workflow.html
+last_built: 2026-03-14T21:58Z
+urls:
+  reference: https://utkarshpawade.github.io/predictCheckR/reference
+  article: https://utkarshpawade.github.io/predictCheckR/articles
