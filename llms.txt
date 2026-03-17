@@ -104,6 +104,79 @@ plot_ppc_stat(example_data$y, y_rep, stat = "sd")
 
 ------------------------------------------------------------------------
 
+## Example: Posterior Predictive Checking
+
+The following example fits a simple Gaussian regression model, generates
+posterior predictive samples, runs diagnostics, and produces three
+plots. See
+[`example_ppc.R`](https://utkarshpawade.github.io/predictCheckR/example_ppc.R)
+for the full reproducible script.
+
+``` r
+library(predictCheckR)
+
+set.seed(42)
+
+# Simulate data: y = 2 + 3x + N(0,1)
+n     <- 100
+x     <- seq(0, 1, length.out = n)
+y_obs <- 2 + 3 * x + rnorm(n, mean = 0, sd = 1)
+
+# Posterior draws from a well-specified model
+S               <- 500
+posterior_draws <- cbind(intercept = rnorm(S, 2.0, 0.15),
+                         slope     = rnorm(S, 3.0, 0.12))
+X               <- cbind(1, x)
+sigma_draws     <- abs(rnorm(S, 1.0, 0.08))
+
+# Generate posterior predictive samples
+y_rep <- simulate_ppc(posterior_draws, X = X,
+                      family = "gaussian", sigma_posterior = sigma_draws)
+
+# Diagnostic statistics
+ppc_diagnostics(y_obs, y_rep)
+
+# Plots
+plot_ppc_overlay(y_obs, y_rep, n_samples = 50)
+plot_ppc_stat(y_obs, y_rep, stat = "mean")
+plot_ppc_stat(y_obs, y_rep, stat = "sd")
+```
+
+### PPC Density Overlay
+
+The dark line shows the observed data distribution; the light lines are
+50 randomly selected posterior predictive replicates. Good overlap
+indicates the model captures the marginal distribution of *y* well.
+
+![PPC overlay plot: observed density vs. posterior predictive
+replicates](reference/figures/ppc_overlay.png)
+
+PPC overlay plot: observed density vs. posterior predictive replicates
+
+### Mean Test-Statistic Distribution
+
+The histogram shows how the replicated mean T(y_rep) varies across 500
+posterior draws. The vertical line marks the observed mean T(y). A
+central position indicates no systematic mean bias.
+
+![Distribution of replicated means with observed mean
+marked](reference/figures/ppc_density.png)
+
+Distribution of replicated means with observed mean marked
+
+### SD Test-Statistic Distribution
+
+The histogram shows the distribution of replicated standard deviations.
+The vertical line is the observed SD. Overlap confirms the model
+captures the spread of the data adequately.
+
+![Distribution of replicated SDs with observed SD
+marked](reference/figures/ppc_diagnostics.png)
+
+Distribution of replicated SDs with observed SD marked
+
+------------------------------------------------------------------------
+
 ## Function Reference
 
 | Function                                                                                                      | Purpose                                                                                                                            |
