@@ -1,0 +1,22 @@
+# R session files
+.Rhistory
+.Rdata
+.RData
+.Rproj.user/
+
+# Package build artifacts
+*.tar.gz
+*.Rcheck/
+src/*.o
+src/*.so
+src/*.dll
+
+# pkgdown site (built locally)
+docs/
+
+# Vignette build artifacts
+inst/doc/
+
+# OS artifacts
+.DS_Store
+Thumbs.db

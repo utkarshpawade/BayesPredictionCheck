@@ -32,4 +32,13 @@ print(diag)
 }
 \seealso{
 \code{\link[=ppc_diagnostics]{ppc_diagnostics()}}
+
+Other ppc-workflow: 
+\code{\link{compare_models_ppc}()},
+\code{\link{plot_ppc_overlay}()},
+\code{\link{plot_ppc_stat}()},
+\code{\link{ppc_diagnostics}()},
+\code{\link{simulate_ppc}()},
+\code{\link{theme_ppc}()}
 }
+\concept{ppc-workflow}

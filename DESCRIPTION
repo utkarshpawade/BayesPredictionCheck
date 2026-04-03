@@ -2,9 +2,9 @@ Package: predictCheckR
 Title: Bayesian Posterior Predictive Checking Utilities
 Version: 0.1.0
 Authors@R: person(
-    given  = "predictCheckR",
-    family = "Maintainer",
-    email  = "maintainer@example.com",
+    given  = "Utkarsh",
+    family = "Pawade",
+    email  = "utkarshpawade2@gmail.com",
     role   = c("aut", "cre")
   )
 Description: Provides a suite of utilities for Bayesian posterior predictive
@@ -23,13 +23,13 @@ Depends:
 Imports:
     bayesplot (>= 1.10.0),
     ggplot2 (>= 3.4.0),
-    stats,
-    methods
+    stats
 Suggests:
     testthat (>= 3.0.0),
     knitr (>= 1.40),
     rmarkdown (>= 2.20),
     pkgdown (>= 2.0.0)
+LazyData: true
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://github.com/utkarshpawade/predictCheckR

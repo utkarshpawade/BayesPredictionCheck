@@ -1,23 +1,9 @@
 #' Compare Two Models via Posterior Predictive Performance Metrics
 #'
 #' @description
-#' Computes a side-by-side comparison of two competing posterior predictive
-#' distributions with respect to three scalar metrics:
-#'
-#' \describe{
-#'   \item{RMSE}{Root mean squared error of the column-wise predictive means
-#'     against the observed data.}
-#'   \item{MAE}{Mean absolute error of the column-wise predictive means against
-#'     the observed data.}
-#'   \item{Pred. Variance Gap}{Absolute difference between the average
-#'     predictive variance across observations and the empirical variance of
-#'     the observed data.  Smaller values indicate that the model captures the
-#'     spread of the data more faithfully.}
-#' }
-#'
-#' Lower values are better for all three metrics.  The function also
-#' computes the difference (Model 1 − Model 2) for each metric so the
-#' direction and magnitude of improvement are immediately visible.
+#' Side-by-side comparison of two posterior predictive distributions on RMSE,
+#' MAE, and predictive variance gap.  Lower is better for all three; the signed
+#' difference (Model 1 − Model 2) is also returned.
 #'
 #' @param y_obs Numeric vector of length \eqn{n}.
 #' @param y_rep1 Numeric matrix \eqn{S_1 \times n}.  Posterior predictive
@@ -36,6 +22,7 @@
 #'     Negative values indicate Model 1 is better for that metric.}
 #' }
 #'
+#' @family ppc-workflow
 #' @seealso [ppc_diagnostics()], [simulate_ppc()]
 #'
 #' @importFrom stats var
@@ -63,27 +50,10 @@ compare_models_ppc <- function(y_obs,
                                model_names = c("Model 1", "Model 2")) {
 
   # ---- input validation -------------------------------------------------------
-  if (!is.numeric(y_obs) || !is.vector(y_obs)) {
-    stop("`y_obs` must be a numeric vector.", call. = FALSE)
-  }
-  if (any(!is.finite(y_obs))) {
-    stop("`y_obs` contains non-finite values.", call. = FALSE)
-  }
-  for (tag in c("y_rep1", "y_rep2")) {
-    obj <- get(tag)
-    if (!is.matrix(obj) || !is.numeric(obj)) {
-      stop(sprintf("`%s` must be a numeric matrix (S x n).", tag), call. = FALSE)
-    }
-    if (ncol(obj) != length(y_obs)) {
-      stop(
-        sprintf(
-          "`%s` has %d columns but `y_obs` has length %d.",
-          tag, ncol(obj), length(y_obs)
-        ),
-        call. = FALSE
-      )
-    }
-  }
+  validate_y_obs(y_obs)
+  validate_y_rep(y_rep1, y_obs)
+  validate_y_rep(y_rep2, y_obs)
+
   if (!is.character(model_names) || length(model_names) != 2L) {
     stop("`model_names` must be a character vector of length 2.", call. = FALSE)
   }
@@ -100,7 +70,6 @@ compare_models_ppc <- function(y_obs,
     mean(abs(pred - y_obs))
   }
 
-  # Average predictive variance per observation (mean of column variances)
   .pred_var_gap <- function(y_rep, y_obs) {
     col_vars    <- apply(y_rep, 2L, stats::var)
     obs_var     <- stats::var(y_obs)
@@ -111,43 +80,28 @@ compare_models_ppc <- function(y_obs,
   metrics <- c("RMSE", "MAE", "Pred. Variance Gap")
 
   m1 <- c(
-    .rmse(.validate_rep(y_rep1, y_obs), y_obs),
+    .rmse(y_rep1, y_obs),
     .mae(y_rep1, y_obs),
     .pred_var_gap(y_rep1, y_obs)
   )
 
   m2 <- c(
-    .rmse(.validate_rep(y_rep2, y_obs), y_obs),
+    .rmse(y_rep2, y_obs),
     .mae(y_rep2, y_obs),
     .pred_var_gap(y_rep2, y_obs)
   )
 
   # ---- assemble output -------------------------------------------------------
-  result <- data.frame(
-    metric           = metrics,
-    model1           = round(m1, 6),
-    model2           = round(m2, 6),
-    diff_m1_minus_m2 = round(m1 - m2, 6),
-    stringsAsFactors = FALSE,
-    check.names      = FALSE
+  result <- stats::setNames(
+    data.frame(
+      metrics,
+      round(m1, 6),
+      round(m2, 6),
+      round(m1 - m2, 6),
+      stringsAsFactors = FALSE
+    ),
+    c("metric", model_names[1L], model_names[2L], "diff_m1_minus_m2")
   )
 
-  colnames(result)[2L] <- model_names[1L]
-  colnames(result)[3L] <- model_names[2L]
-
   result
-}
-
-
-# ---- internal ---------------------------------------------------------------
-
-#' @keywords internal
-.validate_rep <- function(y_rep, y_obs) {
-  if (!is.matrix(y_rep) || !is.numeric(y_rep)) {
-    stop("`y_rep` must be a numeric matrix.", call. = FALSE)
-  }
-  if (ncol(y_rep) != length(y_obs)) {
-    stop("`y_rep` column count must equal length of `y_obs`.", call. = FALSE)
-  }
-  y_rep
 }

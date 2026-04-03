@@ -22,11 +22,19 @@ for typography, grid lines, and panel borders appropriate for academic
 figures.
 }
 \examples{
-\dontrun{
-  library(ggplot2)
-  ggplot(data.frame(x = rnorm(100)), aes(x)) +
-    geom_histogram(bins = 20) +
-    theme_ppc()
-}
+library(ggplot2)
+ggplot(data.frame(x = rnorm(100)), aes(x)) +
+  geom_histogram(bins = 20) +
+  theme_ppc()
 
 }
+\seealso{
+Other ppc-workflow: 
+\code{\link{compare_models_ppc}()},
+\code{\link{plot_ppc_overlay}()},
+\code{\link{plot_ppc_stat}()},
+\code{\link{ppc_diagnostics}()},
+\code{\link{print.ppc_diagnostics}()},
+\code{\link{simulate_ppc}()}
+}
+\concept{ppc-workflow}

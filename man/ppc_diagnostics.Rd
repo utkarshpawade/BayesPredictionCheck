@@ -55,5 +55,14 @@ print(diag)
 
 }
 \seealso{
-\code{\link[=simulate_ppc]{simulate_ppc()}}, \code{\link[=print.ppc_diagnostics]{print.ppc_diagnostics()}}
+\code{\link[=simulate_ppc]{simulate_ppc()}}, \code{\link[=plot_ppc_overlay]{plot_ppc_overlay()}}
+
+Other ppc-workflow: 
+\code{\link{compare_models_ppc}()},
+\code{\link{plot_ppc_overlay}()},
+\code{\link{plot_ppc_stat}()},
+\code{\link{print.ppc_diagnostics}()},
+\code{\link{simulate_ppc}()},
+\code{\link{theme_ppc}()}
 }
+\concept{ppc-workflow}

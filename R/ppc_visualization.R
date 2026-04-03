@@ -1,15 +1,9 @@
 #' Posterior Predictive Density Overlay Plot
 #'
 #' @description
-#' Wraps [bayesplot::ppc_dens_overlay()] to produce a density overlay plot
-#' comparing the observed data distribution against a random subsample of
-#' posterior predictive replicates.  The plot is returned as a `ggplot2`
-#' object and styled with [theme_ppc()].
-#'
-#' A density overlay is one of the most diagnostic plots in the posterior
-#' predictive checking toolkit: if the observed density (dark line) falls
-#' within the envelope formed by the replicated draws (light lines), the model
-#' provides an adequate description of the marginal distribution of \eqn{y}.
+#' Wraps [bayesplot::ppc_dens_overlay()] with consistent styling via
+#' [theme_ppc()].  Subsamples `y_rep` rows for readability when \eqn{S} is
+#' large.
 #'
 #' @param y_obs Numeric vector of length \eqn{n} containing the observed
 #'   outcomes.
@@ -23,6 +17,7 @@
 #'
 #' @return A `ggplot2` object.
 #'
+#' @family ppc-workflow
 #' @seealso [plot_ppc_stat()], [bayesplot::ppc_dens_overlay()]
 #'
 #' @importFrom bayesplot ppc_dens_overlay
@@ -34,17 +29,16 @@
 #' y     <- rnorm(80, mean = 0, sd = 1)
 #' draws <- matrix(rnorm(300 * 80, mean = 0), nrow = 300, ncol = 80)
 #' y_rep <- simulate_ppc(draws)
-#' p     <- plot_ppc_overlay(y, y_rep, n_samples = 40)
-#' \dontrun{
-#'   print(p)
+#' \donttest{
+#'   p <- plot_ppc_overlay(y, y_rep, n_samples = 40)
 #' }
 #'
 #' @export
 plot_ppc_overlay <- function(y_obs, y_rep, n_samples = 50, ...) {
 
   # ---- validation ------------------------------------------------------------
-  .validate_y_obs(y_obs)
-  .validate_y_rep(y_rep, y_obs)
+  validate_y_obs(y_obs)
+  validate_y_rep(y_rep, y_obs)
 
   if (!is.numeric(n_samples) || length(n_samples) != 1L || n_samples < 1L) {
     stop("`n_samples` must be a single positive integer.", call. = FALSE)
@@ -75,14 +69,7 @@ plot_ppc_overlay <- function(y_obs, y_rep, n_samples = 50, ...) {
 #' Posterior Predictive Test-Statistic Distribution Plot
 #'
 #' @description
-#' Wraps [bayesplot::ppc_stat()] to plot the distribution of a scalar
-#' test statistic \eqn{T(y^{rep})} across posterior predictive replicates,
-#' overlaid with the observed value \eqn{T(y)}.  The plot is styled with
-#' [theme_ppc()].
-#'
-#' Large discrepancies between \eqn{T(y)} and the bulk of the \eqn{T(y^{rep})}
-#' distribution are evidence of model misfit with respect to the chosen
-#' statistic.
+#' Wraps [bayesplot::ppc_stat()] with consistent styling via [theme_ppc()].
 #'
 #' @param y_obs Numeric vector of length \eqn{n}.
 #' @param y_rep Numeric matrix of dimension \eqn{S \times n}.
@@ -92,6 +79,7 @@ plot_ppc_overlay <- function(y_obs, y_rep, n_samples = 50, ...) {
 #'
 #' @return A `ggplot2` object.
 #'
+#' @family ppc-workflow
 #' @seealso [plot_ppc_overlay()], [bayesplot::ppc_stat()]
 #'
 #' @importFrom bayesplot ppc_stat
@@ -101,22 +89,19 @@ plot_ppc_overlay <- function(y_obs, y_rep, n_samples = 50, ...) {
 #' y     <- rnorm(80, mean = 1, sd = 1)
 #' draws <- matrix(rnorm(300 * 80, mean = 1), nrow = 300, ncol = 80)
 #' y_rep <- simulate_ppc(draws)
-#' p     <- plot_ppc_stat(y, y_rep, stat = "sd")
-#' \dontrun{
-#'   print(p)
+#' \donttest{
+#'   p <- plot_ppc_stat(y, y_rep, stat = "sd")
 #' }
 #'
 #' @export
 plot_ppc_stat <- function(y_obs, y_rep, stat = "mean", ...) {
 
   # ---- validation ------------------------------------------------------------
-  .validate_y_obs(y_obs)
-  .validate_y_rep(y_rep, y_obs)
+  validate_y_obs(y_obs)
+  validate_y_rep(y_rep, y_obs)
 
   stat <- match.arg(stat, choices = c("mean", "sd"))
 
-  # bayesplot::ppc_stat accepts a function or a character string that it
-  # resolves internally ("mean" and "sd" are natively recognised).
   p <- bayesplot::ppc_stat(y = y_obs, yrep = y_rep, stat = stat, ...) +
     theme_ppc() +
     ggplot2::theme(
@@ -124,35 +109,4 @@ plot_ppc_stat <- function(y_obs, y_rep, stat = "mean", ...) {
     )
 
   p
-}
-
-
-# ---- internal validation helpers -------------------------------------------
-
-#' @keywords internal
-.validate_y_obs <- function(y_obs) {
-  if (!is.numeric(y_obs) || !is.vector(y_obs)) {
-    stop("`y_obs` must be a numeric vector.", call. = FALSE)
-  }
-  if (any(!is.finite(y_obs))) {
-    stop("`y_obs` contains non-finite values.", call. = FALSE)
-  }
-  invisible(NULL)
-}
-
-#' @keywords internal
-.validate_y_rep <- function(y_rep, y_obs) {
-  if (!is.matrix(y_rep) || !is.numeric(y_rep)) {
-    stop("`y_rep` must be a numeric matrix (S x n).", call. = FALSE)
-  }
-  if (ncol(y_rep) != length(y_obs)) {
-    stop(
-      sprintf(
-        "`y_rep` has %d columns but `y_obs` has length %d.",
-        ncol(y_rep), length(y_obs)
-      ),
-      call. = FALSE
-    )
-  }
-  invisible(NULL)
 }

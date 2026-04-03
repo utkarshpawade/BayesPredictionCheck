@@ -35,7 +35,8 @@
 #'     calculation.}
 #' }
 #'
-#' @seealso [simulate_ppc()], [print.ppc_diagnostics()]
+#' @family ppc-workflow
+#' @seealso [simulate_ppc()], [plot_ppc_overlay()]
 #'
 #' @importFrom stats var quantile
 #'
@@ -51,25 +52,9 @@
 ppc_diagnostics <- function(y_obs, y_rep, credible_mass = 0.95) {
 
   # ---- input validation -------------------------------------------------------
-  if (!is.numeric(y_obs) || !is.vector(y_obs)) {
-    stop("`y_obs` must be a numeric vector.", call. = FALSE)
-  }
-  if (any(!is.finite(y_obs))) {
-    stop("`y_obs` contains non-finite values.", call. = FALSE)
-  }
-  if (!is.matrix(y_rep) || !is.numeric(y_rep)) {
-    stop("`y_rep` must be a numeric matrix (S x n).", call. = FALSE)
-  }
-  if (ncol(y_rep) != length(y_obs)) {
-    stop(
-      sprintf(
-        "`y_rep` has %d columns but `y_obs` has length %d. ",
-        ncol(y_rep), length(y_obs)
-      ),
-      "Columns of `y_rep` must correspond to observations.",
-      call. = FALSE
-    )
-  }
+  validate_y_obs(y_obs)
+  validate_y_rep(y_rep, y_obs)
+
   if (!is.numeric(credible_mass) ||
       length(credible_mass) != 1L ||
       credible_mass <= 0 || credible_mass >= 1) {
@@ -81,7 +66,6 @@ ppc_diagnostics <- function(y_obs, y_rep, credible_mass = 0.95) {
   S <- nrow(y_rep)
 
   # ---- test statistic: mean --------------------------------------------------
-  # Posterior predictive mean for each draw
   rep_means <- rowMeans(y_rep)
   obs_mean  <- mean(y_obs)
 
@@ -89,7 +73,6 @@ ppc_diagnostics <- function(y_obs, y_rep, credible_mass = 0.95) {
   bayesian_p_value <- mean(rep_means > obs_mean)
 
   # ---- test statistic: variance ----------------------------------------------
-  # Variance of replicated data per draw
   rep_vars <- apply(y_rep, 1L, stats::var)
   obs_var  <- stats::var(y_obs)
 
@@ -103,7 +86,6 @@ ppc_diagnostics <- function(y_obs, y_rep, credible_mass = 0.95) {
   alpha_lo <- (1 - credible_mass) / 2
   alpha_hi <- 1 - alpha_lo
 
-  # Lower and upper credible bounds for each observation (column)
   lower_bounds <- apply(y_rep, 2L, stats::quantile, probs = alpha_lo)
   upper_bounds <- apply(y_rep, 2L, stats::quantile, probs = alpha_hi)
 
@@ -139,6 +121,7 @@ ppc_diagnostics <- function(y_obs, y_rep, credible_mass = 0.95) {
 #'
 #' @return Invisibly returns `x`.
 #'
+#' @family ppc-workflow
 #' @seealso [ppc_diagnostics()]
 #'
 #' @examples

@@ -1,6 +1,6 @@
 ---
 title: "Posterior Predictive Checking with predictCheckR"
-author: "predictCheckR Maintainer"
+author: "Utkarsh Pawade"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:

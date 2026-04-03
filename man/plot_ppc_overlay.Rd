@@ -24,27 +24,29 @@ when \code{n_samples < S}, otherwise all rows are used.}
 A \code{ggplot2} object.
 }
 \description{
-Wraps \code{\link[bayesplot:PPC-distributions]{bayesplot::ppc_dens_overlay()}} to produce a density overlay plot
-comparing the observed data distribution against a random subsample of
-posterior predictive replicates.  The plot is returned as a \code{ggplot2}
-object and styled with \code{\link[=theme_ppc]{theme_ppc()}}.
-
-A density overlay is one of the most diagnostic plots in the posterior
-predictive checking toolkit: if the observed density (dark line) falls
-within the envelope formed by the replicated draws (light lines), the model
-provides an adequate description of the marginal distribution of \eqn{y}.
+Wraps \code{\link[bayesplot:PPC-distributions]{bayesplot::ppc_dens_overlay()}} with consistent styling via
+\code{\link[=theme_ppc]{theme_ppc()}}.  Subsamples \code{y_rep} rows for readability when \eqn{S} is
+large.
 }
 \examples{
 set.seed(7)
 y     <- rnorm(80, mean = 0, sd = 1)
 draws <- matrix(rnorm(300 * 80, mean = 0), nrow = 300, ncol = 80)
 y_rep <- simulate_ppc(draws)
-p     <- plot_ppc_overlay(y, y_rep, n_samples = 40)
-\dontrun{
-  print(p)
+\donttest{
+  p <- plot_ppc_overlay(y, y_rep, n_samples = 40)
 }
 
 }
 \seealso{
 \code{\link[=plot_ppc_stat]{plot_ppc_stat()}}, \code{\link[bayesplot:PPC-distributions]{bayesplot::ppc_dens_overlay()}}
+
+Other ppc-workflow: 
+\code{\link{compare_models_ppc}()},
+\code{\link{plot_ppc_stat}()},
+\code{\link{ppc_diagnostics}()},
+\code{\link{print.ppc_diagnostics}()},
+\code{\link{simulate_ppc}()},
+\code{\link{theme_ppc}()}
 }
+\concept{ppc-workflow}

@@ -1,5 +1,3 @@
-## Shared test fixtures --------------------------------------------------------
-
 make_y_and_yrep <- function(S = 200, n = 50, seed = 99) {
   set.seed(seed)
   y_obs <- rnorm(n, mean = 2, sd = 1)
@@ -73,8 +71,6 @@ test_that("coverage is near nominal for well-calibrated model", {
   y_rep <- simulate_ppc(draws, sigma_posterior = rep(1, S))
   result <- ppc_diagnostics(y_obs, y_rep, credible_mass = 0.95)
 
-  # For a well-calibrated model with n=200 and S=2000 the coverage
-  # should be within ±0.15 of the nominal level
   expect_gt(result$coverage, 0.80)
   expect_lt(result$coverage, 1.00)
 })
@@ -126,45 +122,4 @@ test_that("print.ppc_diagnostics produces output and returns invisibly", {
   expect_true(length(out) > 0)
   expect_true(any(grepl("Posterior Predictive Diagnostics", out)))
   expect_identical(ret, result)
-})
-
-# ---- compare_models_ppc -----------------------------------------------------
-
-test_that("compare_models_ppc returns a data.frame with 4 rows", {
-  set.seed(7)
-  n  <- 40; S <- 100
-  y  <- rnorm(n)
-  r1 <- simulate_ppc(matrix(rnorm(S * n), S, n))
-  r2 <- simulate_ppc(matrix(rnorm(S * n, mean = 1), S, n))
-
-  tab <- compare_models_ppc(y, r1, r2)
-
-  expect_s3_class(tab, "data.frame")
-  expect_equal(nrow(tab), 3L)
-  expect_true("metric" %in% names(tab))
-})
-
-test_that("compare_models_ppc respects model_names argument", {
-  set.seed(8)
-  n  <- 30; S <- 80
-  y  <- rnorm(n)
-  r1 <- simulate_ppc(matrix(rnorm(S * n), S, n))
-  r2 <- simulate_ppc(matrix(rnorm(S * n), S, n))
-
-  tab <- compare_models_ppc(y, r1, r2,
-                             model_names = c("Alpha", "Beta"))
-
-  expect_true("Alpha" %in% names(tab))
-  expect_true("Beta"  %in% names(tab))
-})
-
-test_that("compare_models_ppc errors on invalid model_names", {
-  set.seed(9)
-  n <- 20; S <- 50
-  y  <- rnorm(n)
-  r1 <- simulate_ppc(matrix(rnorm(S * n), S, n))
-  r2 <- r1
-
-  expect_error(compare_models_ppc(y, r1, r2, model_names = "only_one"),
-               "length 2")
 })

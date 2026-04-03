@@ -43,18 +43,9 @@ replicated data set per posterior draw.
 }
 \description{
 Generates replicated outcome samples \eqn{y^{rep}} from a matrix of
-posterior draws under a specified likelihood family.  Each row of
-\code{posterior_draws} is treated as one posterior sample of the parameter
-vector \eqn{(\mu_1, \ldots, \mu_n)} (Gaussian) or \eqn{(p_1, \ldots, p_n)}
-(Binomial), where \eqn{n} is the number of observations.  When a design
-matrix \code{X} is supplied the linear predictor
-\eqn{\eta = X \beta} is computed first and the appropriate inverse-link is
-applied.
-
-The posterior predictive distribution is
-\deqn{p(y^{rep} \mid y) = \int p(y^{rep} \mid \theta)\, p(\theta \mid y)\, d\theta.}
-This function approximates the integral by averaging over the discrete
-posterior samples.
+posterior draws under a specified likelihood family.  When a design matrix
+\code{X} is supplied the linear predictor \eqn{\eta = X \beta} is computed first
+and the appropriate inverse-link is applied.
 }
 \details{
 For \code{family = "gaussian"}, each replicated observation is drawn as
@@ -77,4 +68,13 @@ dim(y_rep)  # 200 x 50
 }
 \seealso{
 \code{\link[=ppc_diagnostics]{ppc_diagnostics()}}, \code{\link[=plot_ppc_overlay]{plot_ppc_overlay()}}
+
+Other ppc-workflow: 
+\code{\link{compare_models_ppc}()},
+\code{\link{plot_ppc_overlay}()},
+\code{\link{plot_ppc_stat}()},
+\code{\link{ppc_diagnostics}()},
+\code{\link{print.ppc_diagnostics}()},
+\code{\link{theme_ppc}()}
 }
+\concept{ppc-workflow}

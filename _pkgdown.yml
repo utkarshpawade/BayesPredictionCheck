@@ -54,6 +54,4 @@ articles:
       - predictCheckR_workflow
 
 news:
-  releases:
-    - text: "Version 0.1.0"
-      href: https://github.com/utkarshpawade/predictCheckR/releases/tag/v0.1.0
+  releases: []

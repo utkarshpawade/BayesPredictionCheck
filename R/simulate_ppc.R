@@ -2,18 +2,9 @@
 #'
 #' @description
 #' Generates replicated outcome samples \eqn{y^{rep}} from a matrix of
-#' posterior draws under a specified likelihood family.  Each row of
-#' `posterior_draws` is treated as one posterior sample of the parameter
-#' vector \eqn{(\mu_1, \ldots, \mu_n)} (Gaussian) or \eqn{(p_1, \ldots, p_n)}
-#' (Binomial), where \eqn{n} is the number of observations.  When a design
-#' matrix `X` is supplied the linear predictor
-#' \eqn{\eta = X \beta} is computed first and the appropriate inverse-link is
-#' applied.
-#'
-#' The posterior predictive distribution is
-#' \deqn{p(y^{rep} \mid y) = \int p(y^{rep} \mid \theta)\, p(\theta \mid y)\, d\theta.}
-#' This function approximates the integral by averaging over the discrete
-#' posterior samples.
+#' posterior draws under a specified likelihood family.  When a design matrix
+#' `X` is supplied the linear predictor \eqn{\eta = X \beta} is computed first
+#' and the appropriate inverse-link is applied.
 #'
 #' @param posterior_draws A numeric matrix of dimension
 #'   \eqn{S \times P}, where \eqn{S} is the number of posterior iterations and
@@ -48,6 +39,7 @@
 #' logistic function \eqn{p = 1 / (1 + e^{-\eta})} and
 #' \deqn{y^{rep}_{si} \sim \mathrm{Binomial}(n\_trials,\, p_{si}).}
 #'
+#' @family ppc-workflow
 #' @seealso [ppc_diagnostics()], [plot_ppc_overlay()]
 #'
 #' @importFrom stats rnorm rbinom sd
@@ -79,6 +71,11 @@ simulate_ppc <- function(posterior_draws,
          call. = FALSE)
   }
 
+  if (nrow(posterior_draws) < 1L || ncol(posterior_draws) < 1L) {
+    stop("`posterior_draws` must have at least one row and one column.",
+         call. = FALSE)
+  }
+
   family <- match.arg(family, choices = c("gaussian", "binomial"))
 
   S <- nrow(posterior_draws)
@@ -98,10 +95,8 @@ simulate_ppc <- function(posterior_draws,
         "They must match.", call. = FALSE
       )
     }
-    # mu_mat: S x n  (each row is one draw's linear predictor)
-    mu_mat <- posterior_draws %*% t(X)
+    mu_mat <- posterior_draws %*% t(X)   # S x n
   } else {
-    # Without X, columns of posterior_draws ARE the per-observation means
     mu_mat <- posterior_draws
   }
 
@@ -112,7 +107,6 @@ simulate_ppc <- function(posterior_draws,
     family,
 
     gaussian = {
-      # Determine sigma for each draw
       if (!is.null(sigma_posterior)) {
         if (length(sigma_posterior) != S) {
           stop(
@@ -125,27 +119,21 @@ simulate_ppc <- function(posterior_draws,
         }
         sigma_vec <- sigma_posterior
       } else {
-        # Fallback: use row-wise SD of mu_mat as a rough scale; minimum 1e-6
+        # row-wise SD as fallback scale; clamp to avoid zero
         sigma_vec <- pmax(apply(mu_mat, 1L, stats::sd), 1e-6)
       }
 
-      # Draw y_rep: vectorised over draws
-      noise <- matrix(
-        stats::rnorm(S * n, mean = 0, sd = rep(sigma_vec, times = n)),
-        nrow = S, ncol = n, byrow = FALSE
-      )
-      mu_mat + noise
+      mu_mat + matrix(stats::rnorm(S * n), nrow = S, ncol = n) * sigma_vec
     },
 
     binomial = {
-      n_trials <- as.integer(n_trials)
-      if (n_trials < 1L) {
-        stop("`n_trials` must be a positive integer.", call. = FALSE)
+      if (length(n_trials) != 1L || !is.numeric(n_trials) ||
+          is.na(n_trials) || n_trials != as.integer(n_trials) ||
+          n_trials < 1L) {
+        stop("`n_trials` must be a single positive integer.", call. = FALSE)
       }
-      # Apply logistic inverse-link
+      n_trials <- as.integer(n_trials)
       prob_mat <- 1 / (1 + exp(-mu_mat))
-
-      # Draw counts
       matrix(
         stats::rbinom(S * n, size = n_trials, prob = as.vector(prob_mat)),
         nrow = S, ncol = n

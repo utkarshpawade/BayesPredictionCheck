@@ -20,26 +20,27 @@ supported values: \code{"mean"} and \code{"sd"}.  Defaults to \code{"mean"}.}
 A \code{ggplot2} object.
 }
 \description{
-Wraps \code{\link[bayesplot:PPC-test-statistics]{bayesplot::ppc_stat()}} to plot the distribution of a scalar
-test statistic \eqn{T(y^{rep})} across posterior predictive replicates,
-overlaid with the observed value \eqn{T(y)}.  The plot is styled with
-\code{\link[=theme_ppc]{theme_ppc()}}.
-
-Large discrepancies between \eqn{T(y)} and the bulk of the \eqn{T(y^{rep})}
-distribution are evidence of model misfit with respect to the chosen
-statistic.
+Wraps \code{\link[bayesplot:PPC-test-statistics]{bayesplot::ppc_stat()}} with consistent styling via \code{\link[=theme_ppc]{theme_ppc()}}.
 }
 \examples{
 set.seed(3)
 y     <- rnorm(80, mean = 1, sd = 1)
 draws <- matrix(rnorm(300 * 80, mean = 1), nrow = 300, ncol = 80)
 y_rep <- simulate_ppc(draws)
-p     <- plot_ppc_stat(y, y_rep, stat = "sd")
-\dontrun{
-  print(p)
+\donttest{
+  p <- plot_ppc_stat(y, y_rep, stat = "sd")
 }
 
 }
 \seealso{
 \code{\link[=plot_ppc_overlay]{plot_ppc_overlay()}}, \code{\link[bayesplot:PPC-test-statistics]{bayesplot::ppc_stat()}}
+
+Other ppc-workflow: 
+\code{\link{compare_models_ppc}()},
+\code{\link{plot_ppc_overlay}()},
+\code{\link{ppc_diagnostics}()},
+\code{\link{print.ppc_diagnostics}()},
+\code{\link{simulate_ppc}()},
+\code{\link{theme_ppc}()}
 }
+\concept{ppc-workflow}

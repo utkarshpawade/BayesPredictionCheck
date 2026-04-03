@@ -12,16 +12,16 @@
 #'
 #' @return A `ggplot2` theme object that can be added to any plot with `+`.
 #'
+#' @family ppc-workflow
+#'
 #' @importFrom ggplot2 theme_bw theme element_text element_line element_rect
 #'   element_blank margin
 #'
 #' @examples
-#' \dontrun{
-#'   library(ggplot2)
-#'   ggplot(data.frame(x = rnorm(100)), aes(x)) +
-#'     geom_histogram(bins = 20) +
-#'     theme_ppc()
-#' }
+#' library(ggplot2)
+#' ggplot(data.frame(x = rnorm(100)), aes(x)) +
+#'   geom_histogram(bins = 20) +
+#'   theme_ppc()
 #'
 #' @export
 theme_ppc <- function(base_size = 12, base_family = "") {

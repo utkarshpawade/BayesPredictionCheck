@@ -34,23 +34,9 @@ Negative values indicate Model 1 is better for that metric.}
 }
 }
 \description{
-Computes a side-by-side comparison of two competing posterior predictive
-distributions with respect to three scalar metrics:
-
-\describe{
-\item{RMSE}{Root mean squared error of the column-wise predictive means
-against the observed data.}
-\item{MAE}{Mean absolute error of the column-wise predictive means against
-the observed data.}
-\item{Pred. Variance Gap}{Absolute difference between the average
-predictive variance across observations and the empirical variance of
-the observed data.  Smaller values indicate that the model captures the
-spread of the data more faithfully.}
-}
-
-Lower values are better for all three metrics.  The function also
-computes the difference (Model 1 − Model 2) for each metric so the
-direction and magnitude of improvement are immediately visible.
+Side-by-side comparison of two posterior predictive distributions on RMSE,
+MAE, and predictive variance gap.  Lower is better for all three; the signed
+difference (Model 1 − Model 2) is also returned.
 }
 \examples{
 set.seed(42)
@@ -71,4 +57,13 @@ compare_models_ppc(y, y_rep1, y_rep2, model_names = c("Correct", "Shifted"))
 }
 \seealso{
 \code{\link[=ppc_diagnostics]{ppc_diagnostics()}}, \code{\link[=simulate_ppc]{simulate_ppc()}}
+
+Other ppc-workflow: 
+\code{\link{plot_ppc_overlay}()},
+\code{\link{plot_ppc_stat}()},
+\code{\link{ppc_diagnostics}()},
+\code{\link{print.ppc_diagnostics}()},
+\code{\link{simulate_ppc}()},
+\code{\link{theme_ppc}()}
 }
+\concept{ppc-workflow}
