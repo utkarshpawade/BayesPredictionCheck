@@ -1,17 +1,9 @@
 # Generate Posterior Predictive Samples
 
 Generates replicated outcome samples \\y^{rep}\\ from a matrix of
-posterior draws under a specified likelihood family. Each row of
-`posterior_draws` is treated as one posterior sample of the parameter
-vector \\(\mu_1, \ldots, \mu_n)\\ (Gaussian) or \\(p_1, \ldots, p_n)\\
-(Binomial), where \\n\\ is the number of observations. When a design
+posterior draws under a specified likelihood family. When a design
 matrix `X` is supplied the linear predictor \\\eta = X \beta\\ is
 computed first and the appropriate inverse-link is applied.
-
-The posterior predictive distribution is \$\$p(y^{rep} \mid y) = \int
-p(y^{rep} \mid \theta)\\ p(\theta \mid y)\\ d\theta.\$\$ This function
-approximates the integral by averaging over the discrete posterior
-samples.
 
 ## Usage
 
@@ -77,6 +69,14 @@ logistic function \\p = 1 / (1 + e^{-\eta})\\ and \$\$y^{rep}\_{si} \sim
 
 [`ppc_diagnostics()`](https://utkarshpawade.github.io/predictCheckR/reference/ppc_diagnostics.md),
 [`plot_ppc_overlay()`](https://utkarshpawade.github.io/predictCheckR/reference/plot_ppc_overlay.md)
+
+Other ppc-workflow:
+[`compare_models_ppc()`](https://utkarshpawade.github.io/predictCheckR/reference/compare_models_ppc.md),
+[`plot_ppc_overlay()`](https://utkarshpawade.github.io/predictCheckR/reference/plot_ppc_overlay.md),
+[`plot_ppc_stat()`](https://utkarshpawade.github.io/predictCheckR/reference/plot_ppc_stat.md),
+[`ppc_diagnostics()`](https://utkarshpawade.github.io/predictCheckR/reference/ppc_diagnostics.md),
+[`print.ppc_diagnostics()`](https://utkarshpawade.github.io/predictCheckR/reference/print.ppc_diagnostics.md),
+[`theme_ppc()`](https://utkarshpawade.github.io/predictCheckR/reference/theme_ppc.md)
 
 ## Examples
 

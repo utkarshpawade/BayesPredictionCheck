@@ -26,13 +26,22 @@ theme_ppc(base_size = 12, base_family = "")
 
 A `ggplot2` theme object that can be added to any plot with `+`.
 
+## See also
+
+Other ppc-workflow:
+[`compare_models_ppc()`](https://utkarshpawade.github.io/predictCheckR/reference/compare_models_ppc.md),
+[`plot_ppc_overlay()`](https://utkarshpawade.github.io/predictCheckR/reference/plot_ppc_overlay.md),
+[`plot_ppc_stat()`](https://utkarshpawade.github.io/predictCheckR/reference/plot_ppc_stat.md),
+[`ppc_diagnostics()`](https://utkarshpawade.github.io/predictCheckR/reference/ppc_diagnostics.md),
+[`print.ppc_diagnostics()`](https://utkarshpawade.github.io/predictCheckR/reference/print.ppc_diagnostics.md),
+[`simulate_ppc()`](https://utkarshpawade.github.io/predictCheckR/reference/simulate_ppc.md)
+
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-  library(ggplot2)
-  ggplot(data.frame(x = rnorm(100)), aes(x)) +
-    geom_histogram(bins = 20) +
-    theme_ppc()
-} # }
+library(ggplot2)
+ggplot(data.frame(x = rnorm(100)), aes(x)) +
+  geom_histogram(bins = 20) +
+  theme_ppc()
+
 ```

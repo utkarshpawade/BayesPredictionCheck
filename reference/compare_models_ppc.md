@@ -1,28 +1,8 @@
 # Compare Two Models via Posterior Predictive Performance Metrics
 
-Computes a side-by-side comparison of two competing posterior predictive
-distributions with respect to three scalar metrics:
-
-- RMSE:
-
-  Root mean squared error of the column-wise predictive means against
-  the observed data.
-
-- MAE:
-
-  Mean absolute error of the column-wise predictive means against the
-  observed data.
-
-- Pred. Variance Gap:
-
-  Absolute difference between the average predictive variance across
-  observations and the empirical variance of the observed data. Smaller
-  values indicate that the model captures the spread of the data more
-  faithfully.
-
-Lower values are better for all three metrics. The function also
-computes the difference (Model 1 − Model 2) for each metric so the
-direction and magnitude of improvement are immediately visible.
+Side-by-side comparison of two posterior predictive distributions on
+RMSE, MAE, and predictive variance gap. Lower is better for all three;
+the signed difference (Model 1 − Model 2) is also returned.
 
 ## Usage
 
@@ -82,6 +62,14 @@ A `data.frame` with four columns:
 
 [`ppc_diagnostics()`](https://utkarshpawade.github.io/predictCheckR/reference/ppc_diagnostics.md),
 [`simulate_ppc()`](https://utkarshpawade.github.io/predictCheckR/reference/simulate_ppc.md)
+
+Other ppc-workflow:
+[`plot_ppc_overlay()`](https://utkarshpawade.github.io/predictCheckR/reference/plot_ppc_overlay.md),
+[`plot_ppc_stat()`](https://utkarshpawade.github.io/predictCheckR/reference/plot_ppc_stat.md),
+[`ppc_diagnostics()`](https://utkarshpawade.github.io/predictCheckR/reference/ppc_diagnostics.md),
+[`print.ppc_diagnostics()`](https://utkarshpawade.github.io/predictCheckR/reference/print.ppc_diagnostics.md),
+[`simulate_ppc()`](https://utkarshpawade.github.io/predictCheckR/reference/simulate_ppc.md),
+[`theme_ppc()`](https://utkarshpawade.github.io/predictCheckR/reference/theme_ppc.md)
 
 ## Examples
 

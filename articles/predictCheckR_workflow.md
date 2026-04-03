@@ -317,7 +317,7 @@ model fails to capture.
 sessionInfo()
 #> R version 4.5.3 (2026-03-11)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -346,11 +346,11 @@ sessionInfo()
 #> [17] lattice_0.22-9     plyr_1.8.9         R6_2.6.1           labeling_0.4.3    
 #> [21] generics_0.1.4     knitr_1.51         tibble_3.3.1       desc_1.4.3        
 #> [25] bslib_0.10.0       pillar_1.11.1      RColorBrewer_1.1-3 rlang_1.1.7       
-#> [29] stringi_1.8.7      cachem_1.1.0       xfun_0.56          fs_1.6.7          
+#> [29] stringi_1.8.7      cachem_1.1.0       xfun_0.57          fs_2.0.1          
 #> [33] sass_0.4.10        S7_0.2.1           cli_3.6.5          pkgdown_2.2.0     
 #> [37] withr_3.0.2        magrittr_2.0.4     mgcv_1.9-4         digest_0.6.39     
-#> [41] grid_4.5.3         lifecycle_1.0.5    nlme_3.1-168       vctrs_0.7.1       
-#> [45] evaluate_1.0.5     glue_1.8.0         farver_2.1.2       ragg_1.5.1        
-#> [49] reshape2_1.4.5     rmarkdown_2.30     tools_4.5.3        pkgconfig_2.0.3   
+#> [41] grid_4.5.3         lifecycle_1.0.5    nlme_3.1-168       vctrs_0.7.2       
+#> [45] evaluate_1.0.5     glue_1.8.0         farver_2.1.2       ragg_1.5.2        
+#> [49] reshape2_1.4.5     rmarkdown_2.31     tools_4.5.3        pkgconfig_2.0.3   
 #> [53] htmltools_0.5.9
 ```

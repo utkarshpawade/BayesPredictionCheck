@@ -2,16 +2,9 @@
 
 Wraps
 [`bayesplot::ppc_dens_overlay()`](https://mc-stan.org/bayesplot/reference/PPC-distributions.html)
-to produce a density overlay plot comparing the observed data
-distribution against a random subsample of posterior predictive
-replicates. The plot is returned as a `ggplot2` object and styled with
+with consistent styling via
 [`theme_ppc()`](https://utkarshpawade.github.io/predictCheckR/reference/theme_ppc.md).
-
-A density overlay is one of the most diagnostic plots in the posterior
-predictive checking toolkit: if the observed density (dark line) falls
-within the envelope formed by the replicated draws (light lines), the
-model provides an adequate description of the marginal distribution of
-\\y\\.
+Subsamples `y_rep` rows for readability when \\S\\ is large.
 
 ## Usage
 
@@ -52,6 +45,14 @@ A `ggplot2` object.
 [`plot_ppc_stat()`](https://utkarshpawade.github.io/predictCheckR/reference/plot_ppc_stat.md),
 [`bayesplot::ppc_dens_overlay()`](https://mc-stan.org/bayesplot/reference/PPC-distributions.html)
 
+Other ppc-workflow:
+[`compare_models_ppc()`](https://utkarshpawade.github.io/predictCheckR/reference/compare_models_ppc.md),
+[`plot_ppc_stat()`](https://utkarshpawade.github.io/predictCheckR/reference/plot_ppc_stat.md),
+[`ppc_diagnostics()`](https://utkarshpawade.github.io/predictCheckR/reference/ppc_diagnostics.md),
+[`print.ppc_diagnostics()`](https://utkarshpawade.github.io/predictCheckR/reference/print.ppc_diagnostics.md),
+[`simulate_ppc()`](https://utkarshpawade.github.io/predictCheckR/reference/simulate_ppc.md),
+[`theme_ppc()`](https://utkarshpawade.github.io/predictCheckR/reference/theme_ppc.md)
+
 ## Examples
 
 ``` r
@@ -59,8 +60,7 @@ set.seed(7)
 y     <- rnorm(80, mean = 0, sd = 1)
 draws <- matrix(rnorm(300 * 80, mean = 0), nrow = 300, ncol = 80)
 y_rep <- simulate_ppc(draws)
-p     <- plot_ppc_overlay(y, y_rep, n_samples = 40)
-if (FALSE) { # \dontrun{
-  print(p)
-} # }
+# \donttest{
+  p <- plot_ppc_overlay(y, y_rep, n_samples = 40)
+# }
 ```
