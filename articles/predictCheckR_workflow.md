@@ -340,7 +340,7 @@ sessionInfo()
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Matrix_1.7-4       bayesplot_1.15.0   gtable_0.3.6       jsonlite_2.0.0    
-#>  [5] dplyr_1.2.0        compiler_4.5.3     Rcpp_1.1.1         tidyselect_1.2.1  
+#>  [5] dplyr_1.2.1        compiler_4.5.3     Rcpp_1.1.1         tidyselect_1.2.1  
 #>  [9] stringr_1.6.0      jquerylib_0.1.4    splines_4.5.3      systemfonts_1.3.2 
 #> [13] scales_1.4.0       textshaping_1.0.5  yaml_2.3.12        fastmap_1.2.0     
 #> [17] lattice_0.22-9     plyr_1.8.9         R6_2.6.1           labeling_0.4.3    

@@ -5,10 +5,7 @@
 [![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen)](#)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://utkarshpawade.github.io/predictCheckR/LICENSE.md)
-[![CRAN
-status](https://img.shields.io/badge/CRAN-not%20yet%20submitted-blue)](#)
-
-------------------------------------------------------------------------
+—
 
 ## Overview
 
